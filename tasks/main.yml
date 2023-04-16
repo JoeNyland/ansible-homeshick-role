@@ -1,0 +1,31 @@
+---
+- name: Install homeshick
+  tags: homeshick
+  become: false
+  block:
+    - name: Install git
+      apt:
+        name: git
+        update_cache: true
+      become: true
+
+    - name: Re-gather facts
+      setup:
+        gather_subset:
+          - user_dir
+
+    - name: Install
+      git:
+        repo: https://github.com/andsens/homeshick.git
+        dest: "{{ ansible_user_dir }}/.homesick/repos/homeshick"
+        version: "{{ homeshick_version or omit }}"
+
+    - name: Install user dotfiles
+      git:  # noqa latest[git]
+        repo: "{{ item.value }}"
+        dest: "{{ ansible_user_dir }}/.homesick/repos/{{ item.key }}"
+        accept_hostkey: true
+      notify: Link
+      with_dict: "{{ homeshick_dotfiles_repos }}"
+      loop_control:
+        label: "{{ item.key }} -> {{ item.value }}"

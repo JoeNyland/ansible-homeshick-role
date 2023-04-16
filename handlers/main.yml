@@ -1,0 +1,8 @@
+---
+- name: Link
+  command: "{{ ansible_user_dir }}/.homesick/repos/homeshick/bin/homeshick link -vf {{ item.key }}"
+  register: homeshick_install_command
+  changed_when: "'symlink' in homeshick_install_command.stdout"
+  with_dict: "{{ homeshick_dotfiles_repos }}"
+  loop_control:
+    label: "{{ item.key }} -> {{ item.value }}"
