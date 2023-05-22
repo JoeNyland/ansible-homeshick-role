@@ -2,6 +2,7 @@
 - name: Install homeshick
   tags: homeshick
   become: false
+  when: homeshick_dotfiles_repos.keys() | length > 0
   block:
     - name: Install git
       apt:
@@ -29,4 +30,3 @@
       with_dict: "{{ homeshick_dotfiles_repos }}"
       loop_control:
         label: "{{ item.key }} -> {{ item.value }}"
-  when: homeshick_dotfiles_repos.keys() | length > 0
